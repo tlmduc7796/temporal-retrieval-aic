@@ -1,4 +1,4 @@
-import faiss  # pyright: ignore[reportMissingImports]  # type: ignore[import-not-found]
+import faiss  
 import numpy as np
 from dataclasses import dataclass
 from collections import defaultdict
