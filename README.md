@@ -1,36 +1,50 @@
-TRAKE V4: AIC Multimodal Video Retrieval System
-Hệ thống truy xuất video đa phương thức được thiết kế để xử lý các truy vấn ngôn ngữ tự nhiên dạng chuỗi sự kiện theo trình tự thời gian (Chronological Events). Dự án sử dụng mã nguồn mở phục vụ cho AI Challenge (AIC) 2026.
+![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
+![CUDA](https://img.shields.io/badge/CUDA-required-green.svg)
+![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)
 
-Kiến trúc Hệ thống
-TRAKE V4 giải quyết bài toán truy xuất thông qua pipeline 3 bước:
-Multimodal Embedding & Retrieval: Sử dụng mô hình SigLIP-2 (google/siglip2-so400m-patch16-384) để nhúng văn bản và hình ảnh thành vector 1152 chiều. Dữ liệu được tìm kiếm song song qua thư viện FAISS (In-memory IndexFlatIP) trên cả 2 luồng: Visual (ảnh Keyframes) và Text (Transcripts/Summaries).  
-Candidate Fusion: Kết hợp điểm số đa phương thức bằng trọng số tuyến tính (0.6 * Visual + 0.4 * Text), sau đó tính toán độ phủ (coverage) sự kiện để lọc ra Top N video tiềm năng nhất.  
-DANTE Temporal DP: Thuật toán quy hoạch động (Dynamic Programming) đóng vai trò khớp nối thời gian. DANTE áp dụng khoảng cách tối thiểu (min_frame_gap = 2) và hàm phạt gap_penalty (lambda_weight = 0.0002, ideal_gap = 15) để ráp nối các khung hình không gian rời rạc thành một chuỗi sự kiện liền mạch.  
+# TRAKE V4: AIC Multimodal Video Retrieval System
 
-Cấu trúc Thư mục
-temporal-retrieval-aic/
-│   .gitignore
-│   requirements.txt          
-│   main.py                   
-│
-├── configs/                  
-├── data/                     # Đặt dataset, metadata.csv và merged_embeddings.npy tại đây
-│       README.md
-├── docs/                     
-├── examples/                 
-└── src/                      # Mã nguồn phân tách (config, data_loader, retrieval, dante...)
+An open-source multimodal video retrieval system designed to process natural language queries in the form of chronologically ordered event sequences. Developed for the AI Challenge (AIC) 2026.
 
-Hướng dẫn Cài đặt & Sử dụng
-1. Cài đặt môi trường
-Yêu cầu Python 3.10+ và có hỗ trợ GPU/CUDA.
+## System Architecture
 
+TRAKE V4 addresses the retrieval problem through a three-stage pipeline:
+
+1. **Multimodal Embedding & Retrieval** — Uses SigLIP-2 (`google/siglip2-so400m-patch16-384`) to embed both text and images into a shared 1152-dimensional vector space. Retrieval is performed in parallel via FAISS (in-memory `IndexFlatIP`) across two streams: **Visual** (keyframes) and **Text** (transcripts/summaries).
+
+2. **Candidate Fusion** — Combines multimodal scores using a linear weighting scheme (`0.6 × Visual + 0.4 × Text`), then computes event coverage to filter and rank the top-N most promising candidate videos.
+
+3. **DANTE Temporal DP** — A dynamic programming algorithm responsible for temporal alignment. DANTE enforces a minimum frame gap (`min_frame_gap = 2`) and applies a gap penalty function (`lambda_weight = 0.0002`, `ideal_gap = 15`) to stitch together temporally sparse candidate frames into a coherent, ordered event sequence.
+
+
+## Installation & Usage
+
+### 1. Environment Setup
+
+Requires Python 3.10+ with GPU/CUDA support.
+
+```bash
 git clone https://github.com/tlmduc7796/temporal-retrieval-aic.git
 cd temporal-retrieval-aic
 pip install -r requirements.txt
+```
 
-2. Chuẩn bị Dữ liệu
-Tải dataset (Keyframes, Transcripts) và các file embedding (merged_embeddings.npy, merged_metadata.csv) đặt vào thư mục data/. Đảm bảo cấu hình đúng đường dẫn tuyệt đối bên trong src/config.py
+### 2. Data Preparation
 
-3. Khởi chạy Hệ thống
-Cập nhật mảng USER_QUERY trong file main.py để thay đổi chuỗi sự kiện truy vấn và thực thi:
+Download the dataset (keyframes, transcripts) along with the embedding files (`merged_embeddings.npy`, `merged_metadata.csv`) and place them in the `data/` directory. Make sure the absolute paths are correctly configured in `src/config.py`.
+
+### 3. Running the System
+
+Update the `USER_QUERY` array in `main.py` to define your event query sequence, then run:
+
+```bash
 python main.py
+```
+
+
+## Contact
+
+For questions, issues, or collaboration inquiries, please open an [issue](https://github.com/tlmduc7796/temporal-retrieval-aic/issues) or reach out via:
+
+- **Author**: [Minh Duc] — tranleminhduc7796@gmail.com
+- **GitHub**: [@tlmduc7796](https://github.com/tlmduc7796)
