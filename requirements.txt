@@ -1,0 +1,10 @@
+numpy
+pandas
+Pillow
+matplotlib
+torch
+transformers
+open_clip_torch
+faiss-cpu
+bitsandbytes
+accelerate
